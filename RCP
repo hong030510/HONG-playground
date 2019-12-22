@@ -1,0 +1,55 @@
+x=input("너이름이 머야??")
+print(f"{x}아(야) 나랑 가위바위보 하자!")
+
+
+
+import random
+b=random.randint(1,3)
+
+a=input("WHITE HERE:")
+if a== "가위":
+    a=1
+elif a=="바위":
+    a=2
+elif a=="보":
+    a=3
+else:
+    while a not in ["가위","바위","보"]:
+        print("가위/바위/보 중에서 내라고!!")
+        a=input("WHITE HERE:")
+if a == "가위":
+        a = 1
+elif a == "바위":
+         a = 2
+elif     a == "보":
+     a = 3
+if a==b:
+    print("==================\n       tie     \n==================")
+    print("비겼잖아!")
+elif a>b and b != 2:
+    print("==================\n    you   win\n==================")
+    print("앵 내가 저버렸네...")
+elif a>b and b != 3:
+    print("==================\n    you   win\n==================")
+    print("앵 내가 저버렸네...")
+elif a>b and b != 1:
+    print("==================\n    you   win\n==================")
+    print("앵 내가 저버렸네...")
+else:
+    print("==================\n    you   lose\n==================")
+    print("하하 내가 이겨버렸지 뭐얌~")
+
+if a == 1:
+    a = "가위"
+elif a == 2:
+     a = "바위"
+elif a == 3:
+    a = "보"
+
+if b == 1:
+    b = "가위"
+elif b == 2:
+     b = "바위"
+elif b == 3:
+     b = "보"
+print(f"your choice 「{a}」",f"computer choice 「{b}」")
