@@ -18,27 +18,26 @@ else:
         print("가위/바위/보 중에서 내라고!!")
         a=input("WHITE HERE:")
 if a == "가위":
-        a = 1
+       a = 1
 elif a == "바위":
-         a = 2
-elif     a == "보":
-     a = 3
+       a = 2
+elif a == "보":
+       a = 3
 if a==b:
     print("==================\n       tie     \n==================")
     print("비겼잖아!")
-elif a>b and b != 2:
+elif a==1 and b == 3:
     print("==================\n    you   win\n==================")
     print("앵 내가 저버렸네...")
-elif a>b and b != 3:
-    print("==================\n    you   win\n==================")
-    print("앵 내가 저버렸네...")
-elif a>b and b != 1:
-    print("==================\n    you   win\n==================")
-    print("앵 내가 저버렸네...")
-else:
+elif a<b :
     print("==================\n    you   lose\n==================")
     print("하하 내가 이겨버렸지 뭐얌~")
-
+elif a==3 and b ==1:
+    print("==================\n    you   lose\n==================")
+    print("하하 내가 이겨버렸지 뭐얌~")
+elif a>b:
+    print("==================\n    you   win\n==================")
+    print("앵 내가 저버렸네...")
 if a == 1:
     a = "가위"
 elif a == 2:
