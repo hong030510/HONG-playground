@@ -1,0 +1,14 @@
+# HONG-playground
+print("====단위변환기====\n변환하고싶은 단위를 선택해주십시오.")
+print("1.lb->kg\n2.kg->1b")
+num=int(input("입력:"))
+if num==1:
+    a=int(input("변환하고 싶은 lb를 입력하세요."))
+    b=a*0.453592
+    print(f"{a}lb를 kg으로 변환하면 {b}kg입니다.")
+elif num==2:
+    c=int(input("변환하고 싶은 kg를 입력하세요."))
+    d=c*2.204623
+    print(f"{c}kg을 lb으로 변환하면 {d}lb입니다.")
+else:
+    print("올바른 숫자를 입력해주십시오.")
