@@ -1,0 +1,93 @@
+pb = []
+np = 0
+
+while True:
+    print("====================")
+    print(f"현재 데이터 개수:{np}개")
+    print("1. 전화번호 추가")
+    print("2. 전화번호 검색")
+    print("3. 전화번호 삭제")
+    print("4. 전화번호 전체출력")
+    print("5. 취소")
+    print("====================")
+    m = int(input("메뉴선택=>"))
+    if m == 1:  # 추가
+        while True:
+            name = input("이름입력:")
+            if name == "":
+                break
+            number = input("번호 입력:")
+            pb.append([name, number])
+            np += 1
+    elif m == 2:  # 검색
+        name = input("이름을 입력하시오")
+        flag = False
+        for data in pb:
+            if name==data[0]:
+                print(f"{data[0]}의 전화번호는 {data[1]}입니다")
+                flag = True
+        if flag == False:
+            print("그런 이름은 없습니다.")
+    elif m == 3:  # 삭제
+        name = input("삭제할 이름을 입력하세요:")
+        flag = False
+        for data in pb:
+            if name==data[0]:
+                pb.remove(data)
+                np -= 1
+                print(f"{name}이 삭제되었습니다.")
+                flag = True
+        if flag== False:
+            print("그런 이름은 없습니다.")
+    elif m == 4:  # 전체출력
+        for data in pb:
+            print(f"이름은 {data[0]}, 번호는 {data[1]} 입니다")
+    elif m == 5:  # 종료
+        break
+pb = []
+np = 0
+
+
+while True:
+    print("====================")
+    print(f"현재 데이터 개수:{np}개")
+    print("1. 전화번호 추가")
+    print("2. 전화번호 검색")
+    print("3. 전화번호 삭제")
+    print("4. 전화번호 전체출력")
+    print("5. 취소")
+    print("====================")
+    m = int(input("메뉴선택=>"))
+    if m == 1:  # 추가
+        while True:
+            name = input("이름입력:")
+            if name == "":
+                break
+            number = input("번호 입력:")
+            pb.append({"이름":name,"번호":number})
+            np += 1
+    elif m == 2:  # 검색
+        name = input("이름을 입력하시오")
+        flag = False
+        for data in pb:
+            if name==data['이름']:
+                print(f"{name}의 전화번호는 {data['번호']}입니다")
+                flag = True
+        if flag == False:
+            print("그런 이름은 없습니다.")
+    elif m == 3:  # 삭제
+        name = input("삭제할 이름을 입력하세요:")
+        flag = False
+        for data in pb:
+            if name==data['이름']:
+                pb.remove(data)
+                np -= 1
+                print(f"{name}이 삭제되었습니다.")
+                flag = True
+        if flag== False:
+            print("그런 이름은 없습니다.")
+    elif m == 4:  # 전체출력
+        for data in pb:
+            print(f"이름은 {data['이름']}, 번호는 {data['번호']} 입니다")
+    elif m == 5:  # 종료
+        break
