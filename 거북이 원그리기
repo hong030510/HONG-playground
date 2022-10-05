@@ -1,0 +1,21 @@
+import turtle, random
+
+turtle.screensize(500, 500)
+turtle.pensize(3)
+turtle.speed(0)
+color = ['red', 'green', 'blue', 'magenta', 'black']
+
+
+def draw_circle(x, y, color, r):
+    turtle.color(random.choice(color))
+    turtle.penup()
+    turtle.goto(x, y)
+    turtle.pendown()
+    turtle.circle(r, 360)
+
+
+while True:
+    r = random.randint(10, 40)
+    y = random.randint(-250, 250)
+    x = random.randint(-250, 250)
+    draw_circle(x, y, color, r)
