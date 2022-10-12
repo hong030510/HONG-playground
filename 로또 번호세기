@@ -1,0 +1,12 @@
+f = open("/Users/COM/Desktop/lotto145.txt", "r")
+sum = 0
+data = f.readlines()
+for i in data:
+    i = i.strip()
+    i = i.split(" ")
+    sum += i.count("10")
+
+f.close()
+z = open("/Users/COM/Desktop/lotto_freq.txt", "w")
+z.write(f"숫자 10 의 빈도:{sum}")
+f.close()
