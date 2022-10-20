@@ -1,0 +1,47 @@
+import random
+import turtle
+from random import randint, choice
+
+turtle.setup(500, 300)
+
+
+class BALL:
+    xdir, ydir = 1, 1
+
+    def __init__(self, tx, ty, tc, ts, ttut):
+        self.x, self.y = tx, ty
+        self.s = ts
+        self.tut = ttut
+        self.tut.color(tc)
+        self.tut.speed(ts)
+        self.tut.shape("circle")
+
+    def move(self):
+
+        self.x += self.s * self.xdir
+        self.y += self.s * self.ydir
+        if self.x > 250 or self.x < -250:
+            self.xdir = self.xdir * -1
+        if self.y > 150 or self.y < -150:
+            self.ydir = self.ydir * -1
+
+        self.tut.penup()
+        self.tut.goto(self.x, self.y)
+        self.tut.pendown()
+
+
+t = []
+colors = ['pink', 'green', 'yellow', 'magenta', 'blue', 'cyan', 'purple', 'black', 'red']
+speeds = [10, 20, 30, 40]
+for _ in range(10):
+    tx = randint(-250, 250)
+    ty = randint(-150, 150)
+    tc = choice(colors)
+    ts = choice(speeds)
+    t.append(BALL(tx, ty, tc, ts, turtle.Turtle()))
+
+while True:
+    for i in range(10):
+        t[i].move()
+
+turtle.done()
