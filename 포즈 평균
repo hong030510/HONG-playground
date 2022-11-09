@@ -1,0 +1,34 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+df = pd.read_csv("coords.csv")
+df = df[df['class'] == 'poseo']
+
+x = []
+y = []
+z = []
+v = []
+for i in range(1, 34):
+    buff = df["x" + str(i)].mean()
+    x.append(buff)
+    buff = df["y" + str(i)].mean()
+    y.append(buff)
+    buff = df["z" + str(i)].mean()
+    z.append(buff)
+    buff = df["v" + str(i)].mean()
+    v.append(buff)
+
+
+plt.subplot(3,1,1)
+plt.title("Scatter Plot")
+plt.scatter(x,v,c="r" , marker='o')
+plt.ylabel("v")
+plt.subplot(3,1,2)
+plt.scatter(x,z, c="g" ,marker='*')
+plt.ylabel("z")
+plt.subplot(3,1,3)
+plt.scatter(x,y, c="b", marker=".")
+plt.ylabel("y")
+plt.xlabel("x")
+
+plt.show()
