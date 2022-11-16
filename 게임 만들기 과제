@@ -1,0 +1,89 @@
+import random, sys
+import pygame
+from pygame import *
+import math
+
+pygame.init()
+suface = pygame.display.set_mode((400,600))
+pygame.display.set_caption("game 제작")
+FPSLACK = pygame.time.Clock()
+
+font = pygame.font.SysFont("굴림체",36)
+
+airplane = pygame.image.load("image/airplane.png")
+airplane = pygame.transform.scale(airplane,(50,50))
+ufoimage = pygame.image.load("image/ufo.png")
+ufoimage = pygame.transform.scale(ufoimage,(50,50))
+pygame.key.set_repeat(5,5)
+pos = []
+gameover = False
+s=0
+ax,ay = 200,200
+
+
+def dist(x1,x2,y1,y2):
+    return math.sqrt(pow(x1-x2,2)*pow(y1-y2,2))
+
+r2 = Rect(0,0,0,0)
+
+class UFO:
+    def __init__(self):
+        self.x = random.randint(0,400)
+        self.y = random.randint(0, 400)
+        self.live = True
+    def move(self):
+        if self.live:
+            self.x +=random.randint(-5,5)
+            self.y += random.randint(-5, 5)
+
+            r1 = ufoimage.get_rect()
+            r1.center = (self.x ,self.y)
+            suface.blit(ufoimage,r1)
+
+            global r2
+            if r2.colliderect(r1):
+                self.live = False
+                global s
+                s += 1
+
+
+ufo =[]
+for i in range(20):
+    ufo.append(UFO())
+
+
+while True:
+    suface.fill((0,0,0))
+
+    for event in pygame.event.get():
+        if event.type == QUIT:
+            pygame.quit()
+            sys.exit()
+        elif event.type == KEYDOWN:
+            if event.key == K_LEFT:
+                ax -=5
+            elif event.key == K_RIGHT:
+                ax +=5
+            elif event.key == K_UP:
+                ay -=5
+            elif event.key == K_DOWN:
+                ay += 5
+
+    for i in range(20):
+        ufo[i].move()
+
+    #글자쓰기
+
+
+    text = font.render(f"Score:{s}",True,(250,250,250),"black")
+    suface.blit(text, (300,0))
+
+
+
+    #이미지 그리기(애니매이션)
+    r2 = airplane.get_rect()
+    r2.center = (ax, ay)
+    suface.blit(airplane, r2)
+
+    pygame.display.update()
+    FPSLACK.tick(60)
