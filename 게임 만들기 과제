@@ -1,31 +1,28 @@
 import random, sys
 import pygame
 from pygame import *
-import math
 
 pygame.init()
 suface = pygame.display.set_mode((400,600))
 pygame.display.set_caption("game 제작")
 FPSLACK = pygame.time.Clock()
 
-font = pygame.font.SysFont("굴림체",36)
-
+font = pygame.font.Font("H2HDRM.TTF",36)
+#이미지 불러오기
 airplane = pygame.image.load("image/airplane.png")
 airplane = pygame.transform.scale(airplane,(50,50))
 ufoimage = pygame.image.load("image/ufo.png")
 ufoimage = pygame.transform.scale(ufoimage,(50,50))
+
 pygame.key.set_repeat(5,5)
-pos = []
+
 gameover = False
+
 s=0
 ax,ay = 200,200
 
-
-def dist(x1,x2,y1,y2):
-    return math.sqrt(pow(x1-x2,2)*pow(y1-y2,2))
-
 r2 = Rect(0,0,0,0)
-
+#UFO들 객체 선언
 class UFO:
     def __init__(self):
         self.x = random.randint(0,400)
@@ -35,6 +32,15 @@ class UFO:
         if self.live:
             self.x +=random.randint(-5,5)
             self.y += random.randint(-5, 5)
+            #UFO화면 제한
+            if self.x<0:
+                self.x =0
+            elif self.x>400:
+                self.x =400
+            elif self.y<0:
+                self.y =0
+            elif self.y >600:
+                self.y=600
 
             r1 = ufoimage.get_rect()
             r1.center = (self.x ,self.y)
@@ -46,11 +52,9 @@ class UFO:
                 global s
                 s += 1
 
-
 ufo =[]
 for i in range(20):
     ufo.append(UFO())
-
 
 while True:
     suface.fill((0,0,0))
@@ -58,7 +62,9 @@ while True:
     for event in pygame.event.get():
         if event.type == QUIT:
             pygame.quit()
-            sys.exit()
+            sys.exit
+
+        #키 조종
         elif event.type == KEYDOWN:
             if event.key == K_LEFT:
                 ax -=5
@@ -68,19 +74,29 @@ while True:
                 ay -=5
             elif event.key == K_DOWN:
                 ay += 5
+    #화면 제한
+    if ax<0:
+        ax=0
+    elif ax>400:
+        ax=400
+    elif ay<0:
+        ay=0
+    elif ay>600:
+        ay=600
+    #자동으로 종료
+
 
     for i in range(20):
         ufo[i].move()
+    #점수 표시
+    if s == 20:
+        suface.fill((0, 0, 0))
+        text = font.render(f"최종점수:{s}", True, (250, 250, 250), "black")
+        suface.blit(text, (100, 200))
 
-    #글자쓰기
-
-
-    text = font.render(f"Score:{s}",True,(250,250,250),"black")
-    suface.blit(text, (300,0))
-
-
-
-    #이미지 그리기(애니매이션)
+    text = font.render(f"점수:{s}",True,(250,250,250),"black")
+    suface.blit(text, (275,0))
+    #비행기 위치
     r2 = airplane.get_rect()
     r2.center = (ax, ay)
     suface.blit(airplane, r2)
