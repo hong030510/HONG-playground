@@ -1,0 +1,56 @@
+import turtle
+from tkinter import *
+
+w = Tk()
+
+t= turtle.Turtle()
+t.shape("turtle")
+t.pensize(5)
+turtle.screensize(500,500)
+
+def FORWARD():
+    t.forward(50)
+def LEFT():
+    t.left(20)
+def Right():
+    t.right(20)
+def BACKWARD():
+    t.backward(50)
+def CIRCLE():
+    t.circle(50,180)
+
+b1 =Button(w, text="직진",width=3,command=FORWARD ,  height=3)
+b2 =Button(w, text="좌",width=3,command=LEFT,  height=3)
+b3 =Button(w, text="원",width=3,command=CIRCLE, height=3,bg="yellow")
+b4 =Button(w, text="우",width=3,command=Right, height=3)
+b5 =Button(w, text="후진",width=3,command=BACKWARD, height=3)
+
+def CH_COLOR():
+    c=choice.get()
+    if c==1:
+        t.color("black")
+    elif c==2:
+        t.color("red")
+    elif c==3:
+        t.color("green")
+    elif c==4:
+        t.color("blue")
+
+choice = IntVar()
+r1 =Radiobutton(w, text="검정색",value=1, variable=choice, command=CH_COLOR)
+r2 =Radiobutton(w, text="빨간색",value=2,variable=choice, command=CH_COLOR)
+r3 =Radiobutton(w, text="녹색",value=3, variable=choice, command=CH_COLOR)
+r4 =Radiobutton(w, text="파란색",value=4, variable=choice, command=CH_COLOR)
+
+b1.grid(row=0,column=1)
+b2.grid(row=1,column=0)
+b3.grid(row=1,column=1)
+b4.grid(row=1,column=2)
+b5.grid(row=2,column=1)
+
+r1.grid(row=3,column=3,sticky=W)
+r2.grid(row=4,column=3,sticky=W)
+r3.grid(row=5,column=3,sticky=W)
+r4.grid(row=6,column=3,sticky=W)
+
+w.mainloop()
