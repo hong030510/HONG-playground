@@ -4,31 +4,22 @@ import random
 
 # 게임 화면 크기
 WINDOW_WIDTH = 1000
-WINDOW_HEIGHT = 400
+WINDOW_HEIGHT = 550
 game_start = False
 # 색상
 WHITE = (255, 255, 255)
 Black = (0, 0, 0)
+Red = (255, 0, 0)
 
-miss = 0
-
+life = 3
+stage = 1
 # 속도와 질량 기본 값
-VELOCITY = 7
-MASS = 2
+VELOCITY = 5
+MASS = 4
 
-
-class Button():
-    def __init__(self, x, y, width, height):
-        self.x = x
-        self.y = y
-        self.width = width
-        self.height = height
-
-        self.fillColors = {
-            'normal': '#ffffff',
-            'hover': '#666666',
-            'pressed': '#333333',
-        }
+background1 = pygame.image.load("image/background1.png")
+background2 = pygame.image.load("image/background2.png")
+background3 = pygame.image.load("image/background3.png")
 
 
 class Player:
@@ -43,15 +34,13 @@ class Player:
         self.m = MASS  # 질량
 
     def load_palyer(self):
-        # 플레이어 차량
-        self.image = pygame.image.load("image/s2.png")
+        self.image = pygame.image.load("image/police1.png")
         # 크기 조정
-        self.image = pygame.transform.scale(self.image, (80, 80))
+        self.image = pygame.transform.scale(self.image, (130, 130))
         self.rect = self.image.get_rect()
         self.rect.bottom = WINDOW_HEIGHT
         self.rect.centerx = round(WINDOW_WIDTH / 9)
 
-    # 자동차를 스크린에 그리기
     def draw_player(self):
         SCREEN.blit(self.image, [self.rect.x, self.rect.y])
 
@@ -80,7 +69,7 @@ class Player:
             self.rect.y -= round(F)
 
             # 속도 줄여줌
-            self.v -= 1
+            self.v -= 0.35
 
             # 바닥에 닿았을때, 변수 리셋
             if self.rect.bottom > WINDOW_HEIGHT:
@@ -89,11 +78,35 @@ class Player:
                 self.v = VELOCITY
 
 
+class Runer:
+
+    def __init__(self):
+        self.image = ""
+        self.dx = 3
+        self.dy = 0
+        self.rect = ""
+
+    def load_Runer(self):
+        self.image = pygame.image.load("image/s2.png")
+        # 크기 조정
+        self.image = pygame.transform.scale(self.image, (130, 130))
+        self.rect = self.image.get_rect()
+        self.rect.bottom = round(WINDOW_HEIGHT)
+        self.rect.centerx = round(WINDOW_WIDTH)
+
+    def move_runer(self):
+        self.rect.centerx -= self.dx
+
+    def draw_Runer(self):
+        SCREEN.blit(self.image, [self.rect.x, self.rect.y])
+
+
 class Stone:
     def __init__(self):
         # 돌의 이동속도
-        self.dx = 8
+        self.dx = 10
         self.dy = 0
+        self.live = False
 
     def load_stone(self):
         # 돌맹이 불러오기
@@ -103,7 +116,7 @@ class Stone:
         self.rect.centerx = round(WINDOW_WIDTH)
         self.rect.bottom = WINDOW_HEIGHT
 
-    def move(self):
+    def move_stone(self):
         self.rect.centerx -= self.dx
 
     def draw_stone(self):
@@ -111,7 +124,7 @@ class Stone:
 
 
 def main():
-    global SCREEN, WINDOW_WIDTH, WINDOW_HEIGHT, game_start , miss
+    global SCREEN, WINDOW_WIDTH, WINDOW_HEIGHT, game_start, life, stage
 
     # pygame 초기화 및 스크린 생성
     pygame.init()
@@ -122,24 +135,36 @@ def main():
 
     # 게임속 요소 생성
     player = Player()
-    stone = Stone()
+    stone_list = [Stone()]
+    runer = Runer()
 
     # 요소들 불러오기
     player.load_palyer()
-    stone.load_stone()
+    runer.load_Runer()
+    stone_list[0].load_stone()
 
     playing = True
 
     while playing:
         Myfont = pygame.font.SysFont(None, 50)
+        subfont = pygame.font.SysFont(None, 30)
         ingame_text = Myfont.render("press the 'p'", True, Black)
         ingame_text_Rect = ingame_text.get_rect()
-        ingame_text_Rect.centerx = round(WINDOW_WIDTH / 2)
-        ingame_text_Rect.bottom = round(WINDOW_HEIGHT / 2)
+        ingame_text_Rect.centerx = round(WINDOW_WIDTH / 2) - ingame_text_Rect.centerx
+        ingame_text_Rect.bottom = round(WINDOW_HEIGHT / 2) - ingame_text_Rect.bottom
         game_over = Myfont.render("GAME OVER", True, Black)
         game_over_Rect = game_over.get_rect()
-        game_over_Rect.centerx = round(WINDOW_WIDTH/ 2)
-        game_over_Rect.bottom = round(WINDOW_HEIGHT / 2)
+        game_over_Rect.centerx = round(WINDOW_WIDTH / 2) - game_over_Rect.centerx
+        game_over_Rect.bottom = round(WINDOW_HEIGHT / 2) - game_over_Rect.bottom
+        life_font = Myfont.render(f"Life:{life}", True, Red)
+        restart = subfont.render("press the 'p'", True, Black)
+        restart_rect = restart.get_rect()
+        restart_rect.centerx = round(WINDOW_WIDTH / 2) - restart_rect.centerx
+        restart_rect.bottom = round(WINDOW_HEIGHT / 2) - restart_rect.bottom + 50
+        clear = Myfont.render("CLEAR!!", True, Black)
+        clear_Rect = clear.get_rect()
+        clear_Rect.centerx = round(WINDOW_WIDTH / 2) - clear_Rect.centerx
+        clear_Rect.bottom = round(WINDOW_HEIGHT / 2) - clear_Rect.bottom
 
         # 키가 눌린 상태 체크
         keys = pygame.key.get_pressed()
@@ -159,6 +184,8 @@ def main():
                 # 스페이스키를 눌렀을 때,
                 if event.key == pygame.K_p:
                     game_start = True
+                    life = 3
+                    stage = 1
                 if game_start == True:
 
                     # 0이면 바닥인 상태 : 1로 변경
@@ -174,35 +201,62 @@ def main():
         ''' 게임 코드 작성 '''
 
         if game_start:
-            SCREEN.fill(WHITE)
+            if stage == 1:
+                SCREEN.blit(background1, [0, 0])
+
+            elif stage == 2:
+                SCREEN.blit(background2, [0, 0])
+
+            elif stage == 3:
+                SCREEN.blit(background3, [0, 0])
+
+            elif stage == 4:
+                game_start =  False
+
+            SCREEN.blit(life_font, [0, 0])
             # 객체들 그리기
             player.draw_player()
-            stone.draw_stone()
-
-            # 객체들 이동
             player.update()
-            stone.move()
+            for stone in stone_list:
+                if stone.rect.x < 0:
+                    stone_list.remove(stone)
+                    stone_list.append(Stone())
+                    stone_list[-1].load_stone()
+                    break
+            stone.draw_stone()
+            runer.draw_Runer()
+            stone.move_stone()
+            runer.move_runer()
 
-            print(stone.rect)
-            if (player.rect.colliderect(stone.image.get_rect(topleft=(stone.rect.x, stone.rect.y)))):
-                miss += 1
-                game_start = False
-                print(stone.rect)
+            player.mask = pygame.mask.from_surface(player.image)
+            stone.mask = pygame.mask.from_surface(stone.image)
 
-        elif miss>=1:
+            if (pygame.sprite.collide_rect(player, stone)):
+                stone_list.remove(stone)
+                stone_list.append(Stone())
+                stone_list[-1].load_stone()
+                life -= 1
+
+                if life <= 0:
+                    game_start = False
+                    stone.rect.x = 1000
+                    runer.rect.x = 1000
+                    SCREEN.fill(WHITE)
+                    SCREEN.blit(game_over, [game_over_Rect.centerx, game_over_Rect.bottom])
+                    SCREEN.blit(restart, [restart_rect.centerx, restart_rect.bottom])
+
+            runer.mask = pygame.mask.from_surface(runer.image)
+            if (pygame.sprite.collide_rect(player, runer)):
+                stage += 1
+                runer.rect.x = 1000
+
+        elif stage == 4 and not game_start:
             SCREEN.fill(WHITE)
-            SCREEN.blit(game_over,[game_over_Rect.centerx,game_over_Rect.bottom])
+            SCREEN.blit(clear, [clear_Rect.centerx, clear_Rect.bottom])
 
-        elif miss ==0 and not game_start:
+        elif life == 3 and not game_start:
             SCREEN.fill(WHITE)
-            SCREEN.blit(ingame_text,[ingame_text_Rect.centerx,ingame_text_Rect.bottom])
-
-
-
-
-
-
-
+            SCREEN.blit(ingame_text, [ingame_text_Rect.centerx, ingame_text_Rect.bottom])
 
         ''' 게임 코드 끝 '''
 
