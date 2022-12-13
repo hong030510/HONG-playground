@@ -10,6 +10,7 @@ game_start = False
 WHITE = (255, 255, 255)
 Black = (0, 0, 0)
 Red = (255, 0, 0)
+sbird = False
 
 life = 3
 stage = 1
@@ -17,6 +18,11 @@ stage = 1
 VELOCITY = 5
 MASS = 4
 
+img_load1 = pygame.image.load("image/police1.png")
+img_load2 = pygame.image.load("image/police2.png")
+img_load1 = pygame.transform.scale(img_load1,(100,100))
+img_load2 = pygame.transform.scale(img_load2,(100,100))
+motion = [img_load1,img_load2]
 background1 = pygame.image.load("image/background1.png")
 background2 = pygame.image.load("image/background2.png")
 background3 = pygame.image.load("image/background3.png")
@@ -32,17 +38,28 @@ class Player:
         self.isJump = 0
         self.v = VELOCITY  # 속도
         self.m = MASS  # 질량
-
+        self.walkcount = 0
+        self.silde = False
+        self.simage = ""
     def load_palyer(self):
         self.image = pygame.image.load("image/police1.png")
+        self.simage = pygame.image.load("image/slide.png")
         # 크기 조정
         self.image = pygame.transform.scale(self.image, (130, 130))
+        self.simage = pygame.transform.scale(self.simage, (120,120))
         self.rect = self.image.get_rect()
         self.rect.bottom = WINDOW_HEIGHT
         self.rect.centerx = round(WINDOW_WIDTH / 9)
 
     def draw_player(self):
-        SCREEN.blit(self.image, [self.rect.x, self.rect.y])
+        self.walkcount +=1
+        if self.silde == False:
+            if self.walkcount> 1:
+                self.walkcount = 0
+
+            SCREEN.blit(motion[self.walkcount],[self.rect.x,self.rect.y])
+        if self.silde ==True:
+            SCREEN.blit(self.simage,[self.rect.x,self.rect.y])
 
     def jump(self, j):
         self.isJump = j
@@ -82,7 +99,7 @@ class Runer:
 
     def __init__(self):
         self.image = ""
-        self.dx = 3
+        self.dx = 2
         self.dy = 0
         self.rect = ""
 
@@ -106,7 +123,6 @@ class Stone:
         # 돌의 이동속도
         self.dx = 10
         self.dy = 0
-        self.live = False
 
     def load_stone(self):
         # 돌맹이 불러오기
@@ -122,9 +138,29 @@ class Stone:
     def draw_stone(self):
         SCREEN.blit(self.image, [self.rect.x, self.rect.y])
 
+class Bird:
+    def __init__(self):
+        # 돌의 이동속도
+        self.dx = 20
+        self.dy = 0
+
+    def load_bird(self):
+        # 돌맹이 불러오기
+        self.image = pygame.image.load("image/bird.png")
+        self.image = pygame.transform.scale(self.image, (130, 130))
+        self.rect = self.image.get_rect()
+        self.rect.centerx = round(WINDOW_WIDTH)
+        self.rect.bottom = round(WINDOW_HEIGHT*6/7)
+
+    def move_bird(self):
+        self.rect.centerx -= self.dx
+
+    def draw_bird(self):
+        SCREEN.blit(self.image, [self.rect.x, self.rect.y])
+
 
 def main():
-    global SCREEN, WINDOW_WIDTH, WINDOW_HEIGHT, game_start, life, stage
+    global SCREEN, WINDOW_WIDTH, WINDOW_HEIGHT, game_start, life, stage,sbird
 
     # pygame 초기화 및 스크린 생성
     pygame.init()
@@ -137,11 +173,13 @@ def main():
     player = Player()
     stone_list = [Stone()]
     runer = Runer()
+    bird_list =[Bird()]
 
     # 요소들 불러오기
     player.load_palyer()
     runer.load_Runer()
     stone_list[0].load_stone()
+    bird_list[0].load_bird()
 
     playing = True
 
@@ -182,6 +220,9 @@ def main():
 
             if event.type == pygame.KEYDOWN:
                 # 스페이스키를 눌렀을 때,
+                if event.key == pygame.K_s:
+                    player.silde =True
+                    sbird = True
                 if event.key == pygame.K_p:
                     game_start = True
                     life = 3
@@ -195,12 +236,17 @@ def main():
                             player.jump(1)
                         elif player.isJump == 1:
                             player.jump(2)
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_s:
+                    player.silde = False
+                    sbird = False
 
         # 배경색을 흰색으로
 
         ''' 게임 코드 작성 '''
 
         if game_start:
+
             if stage == 1:
                 SCREEN.blit(background1, [0, 0])
 
@@ -209,6 +255,7 @@ def main():
 
             elif stage == 3:
                 SCREEN.blit(background3, [0, 0])
+                stone.dx=10
 
             elif stage == 4:
                 game_start =  False
@@ -216,6 +263,7 @@ def main():
             SCREEN.blit(life_font, [0, 0])
             # 객체들 그리기
             player.draw_player()
+
             player.update()
             for stone in stone_list:
                 if stone.rect.x < 0:
@@ -228,27 +276,68 @@ def main():
             stone.move_stone()
             runer.move_runer()
 
+            for bird in bird_list:
+                if bird.rect.x<0:
+                    bird_list.remove(bird)
+                    bird_list.append(Bird())
+                    bird_list[-1].load_bird()
+                    break
+            if stage ==2 or stage ==3:
+                bird.draw_bird()
+                bird.move_bird()
+
             player.mask = pygame.mask.from_surface(player.image)
             stone.mask = pygame.mask.from_surface(stone.image)
-
+            bird.mask = pygame.mask.from_surface(bird.image)
+            runer.mask = pygame.mask.from_surface(runer.image)
             if (pygame.sprite.collide_rect(player, stone)):
-                stone_list.remove(stone)
-                stone_list.append(Stone())
-                stone_list[-1].load_stone()
+                stone.rect.x = 1000
                 life -= 1
-
-                if life <= 0:
+                if life == 0:
                     game_start = False
                     stone.rect.x = 1000
                     runer.rect.x = 1000
+                    bird.rect.x = 1000
                     SCREEN.fill(WHITE)
                     SCREEN.blit(game_over, [game_over_Rect.centerx, game_over_Rect.bottom])
                     SCREEN.blit(restart, [restart_rect.centerx, restart_rect.bottom])
 
-            runer.mask = pygame.mask.from_surface(runer.image)
+            if (pygame.sprite.collide_rect(player, runer)):
+
+                runer.rect.x = 1000
+                stage += 1
+            if (pygame.sprite.collide_rect(player, bird)):
+                if sbird == True and player.isJump == 0:
+                    if life == 0:
+                        game_start = False
+                        stone.rect.x = 1000
+                        runer.rect.x = 1000
+                        bird.rect.x = 1000
+                        SCREEN.fill(WHITE)
+                        SCREEN.blit(game_over, [game_over_Rect.centerx, game_over_Rect.bottom])
+                        SCREEN.blit(restart, [restart_rect.centerx, restart_rect.bottom])
+
+                elif player.isJump == 1 and sbird == True:
+                    bird.rect.x = 1000
+                    life -= 1
+                else:
+                    bird.rect.x = 1000
+                    life -= 1
+
+
+                if life == 0:
+                    game_start = False
+                    stone.rect.x = 1000
+                    runer.rect.x = 1000
+                    bird.rect.x = 1000
+                    SCREEN.fill(WHITE)
+                    SCREEN.blit(game_over, [game_over_Rect.centerx, game_over_Rect.bottom])
+                    SCREEN.blit(restart, [restart_rect.centerx, restart_rect.bottom])
+
             if (pygame.sprite.collide_rect(player, runer)):
                 stage += 1
                 runer.rect.x = 1000
+
 
         elif stage == 4 and not game_start:
             SCREEN.fill(WHITE)
